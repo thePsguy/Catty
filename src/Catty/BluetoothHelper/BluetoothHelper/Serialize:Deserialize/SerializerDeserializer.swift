@@ -32,10 +32,12 @@ func fromHostByteOrder<T>(_ value:T) -> T {
 }
 
 func byteArrayValue<T>(_ value:T) -> [UInt8] {
-    let values = [value]
-    let data = Data(bytes: UnsafePointer<UInt8>(values), count:MemoryLayout<T>.size)
-    var byteArray = [UInt8](repeating: 0, count: MemoryLayout<T>.size)
-    (data as NSData).getBytes(&byteArray, length:MemoryLayout<T>.size)
+    var values = [value]
+    let data = withUnsafePointer(to: &values) {
+      Data(bytes: UnsafePointer($0), count:MemoryLayout.size(ofValue: T.self))
+    }
+    var byteArray = [UInt8](repeating: 0, count:MemoryLayout.size(ofValue: T.self))
+    (data as NSData).getBytes(&byteArray, length:MemoryLayout.size(ofValue: T.self))
     return byteArray
 }
 
@@ -181,8 +183,8 @@ public struct Deserializer {
   
   public static func deserialize<T:RawPairDeserialize>(_ data:Data) -> T? where T.RawType1:Deserialize,  T.RawType2:Deserialize {
     if data.count >= (T.RawType1.size + T.RawType2.size) {
-      let rawData1 = data.subdata(in: NSMakeRange(0, T.RawType1.size))
-      let rawData2 = data.subdata(in: NSMakeRange(T.RawType1.size, T.RawType2.size))
+      let rawData1 = data.subdata(in: 0..<T.RawType1.size)
+      let rawData2 = data.subdata(in: T.RawType1.size..<T.RawType2.size)
       return T.RawType1.deserialize(rawData1).flatmap {rawValue1 in
         T.RawType2.deserialize(rawData2).flatmap {rawValue2 in
           T(rawValue1:rawValue1, rawValue2:rawValue2)
@@ -195,8 +197,8 @@ public struct Deserializer {
   
   public static func deserialize<T:RawArrayPairDeserialize>(_ data:Data) -> T? where T.RawType1:Deserialize,  T.RawType2:Deserialize {
     if data.count >= (T.size1 + T.size2) {
-      let rawData1 = data.subdata(in: NSMakeRange(0, T.size1))
-      let rawData2 = data.subdata(in: NSMakeRange(T.size1, T.size2))
+      let rawData1 = data.subdata(in: 0..<T.size1)
+      let rawData2 = data.subdata(in: T.size1..<T.size2)
       return T(rawValue1:T.RawType1.deserialize(rawData1), rawValue2:T.RawType2.deserialize(rawData2))
     } else {
       return nil

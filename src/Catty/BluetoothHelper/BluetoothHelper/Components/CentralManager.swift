@@ -141,7 +141,7 @@ open class CentralManager : NSObject, CBCentralManagerDelegate, CMWrapper {
             NSLog("error")
             return
         }
-        bcPeripheral.didFailToConnectPeripheral(error)
+        bcPeripheral.didFailToConnectPeripheral(error as NSError?)
     }
     
     open func centralManager(_:CBCentralManager!, didRetrieveConnectedPeripherals peripherals:[AnyObject]!) {
@@ -177,22 +177,22 @@ open class CentralManager : NSObject, CBCentralManagerDelegate, CMWrapper {
                 advertisements[key] = (value as? String)
             } else {
                 advertisements[key] = value.stringValue
+          }
+      }
+      for key in advertDictionary.keys {
+        if let value : AnyObject = advertDictionary[key] {
+          if let valueArray = value as? [AnyObject] {
+            for valueItem: AnyObject in valueArray {
+              addKey(key, andValue:valueItem)
             }
+          } else {
+            addKey(key, andValue:value)
+          }
         }
-        for key in advertDictionary.keys {
-            if let value : AnyObject = advertDictionary[key] {
-                if value is NSArray {
-                    for valueItem : AnyObject in (value as! NSArray) {
-                        addKey(key, andValue:valueItem)
-                    }
-                } else {
-                    addKey(key, andValue:value)
-                }
-            }
-        }
-        return advertisements
-    }
-    
+      }
+      return advertisements
+  }
+  
     //MARK: Wrap
     open var isOn : Bool {
         switch self.cbCentralManager.state {

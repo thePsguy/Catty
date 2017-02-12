@@ -29,13 +29,23 @@ extension Data : Serialize {
     }
     
     public static func serialize<T>(_ value:T) -> Data {
-        let values = [fromHostByteOrder(value)]
-        return Data(bytes: UnsafePointer<UInt8>(values), count:sizeof(T))
+        var values = [fromHostByteOrder(value)]
+        let count = MemoryLayout.size(ofValue: T.self)
+        let data = withUnsafePointer(to: &values) {
+            Data(bytes: UnsafePointer($0), count:count)
+        }
+        
+        return data
     }
     
     public static func serializeArray<T>(_ values:[T]) -> Data {
-        let littleValues = values.map{fromHostByteOrder($0)}
-        return Data(bytes: UnsafePointer<UInt8>(littleValues), count:sizeof(T)*littleValues.count)
+        var littleValues = values.map{ fromHostByteOrder($0) }
+        let count = MemoryLayout.size(ofValue: T.self) * littleValues.count
+        let data = withUnsafePointer(to: &littleValues) {
+            Data(bytes: UnsafePointer($0), count:count)
+        }
+        
+        return data
     }
 
     public static func serialize<T1, T2>(_ value1:T1, value2:T2) -> Data {

@@ -63,7 +63,7 @@
 		92EC98C61BC3C3500003A891 /* ProfileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
 		92EC98C71BC3C3500003A891 /* ServiceProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfile.swift; sourceTree = "<group>"; };
 		92EC98C91BC3C3500003A891 /* DeserializeExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeserializeExtensions.swift; sourceTree = "<group>"; };
-		92EC98CA1BC3C3500003A891 /* SerializeExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializeExtensions.swift; sourceTree = "<group>"; };
+		92EC98CA1BC3C3500003A891 /* SerializeExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = SerializeExtensions.swift; sourceTree = "<group>"; tabWidth = 4; };
 		92EC98CB1BC3C3500003A891 /* SerializerDeserializer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializerDeserializer.swift; sourceTree = "<group>"; };
 		92EC98DA1BC3C39A0003A891 /* BluetoothTestHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothTestHelper.swift; sourceTree = "<group>"; };
 		92EC98DB1BC3C39A0003A891 /* CentralManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManagerTests.swift; sourceTree = "<group>"; };
