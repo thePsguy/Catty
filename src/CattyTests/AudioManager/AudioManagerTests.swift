@@ -38,8 +38,8 @@ class AudioManagerTests: XCTestCase {
     }
     
     func testPlaySound() {
-        let testBundle = NSBundle(forClass: self.dynamicType)
-        let fileURL = testBundle.URLForResource("silence", withExtension: "mp3")
+        let testBundle = Bundle(for: type(of: self))
+        let fileURL = testBundle.url(forResource: "silence", withExtension: "mp3")
         XCTAssertNotNil(fileURL)
         
         let result = audioManager.playSoundWithFileName(fileURL!.lastPathComponent, andKey: "key", atFilePath: fileURL!.URLByDeletingLastPathComponent!.path)

@@ -23,10 +23,10 @@
 extension PointToBrick: CBInstructionProtocol {
 
     func instruction() -> CBInstruction {
-        return .Action(action: SKAction.runBlock(actionBlock()))
+        return .action(action: SKAction.run(actionBlock()))
     }
 
-    func actionBlock() -> dispatch_block_t {
+    func actionBlock() -> ()->() {
         guard let object = self.script?.object,
               let spriteNode = object.spriteNode
         else { fatalError("This should never happen!") }

@@ -24,23 +24,23 @@ extension SetLookBrick: CBInstructionProtocol {
 
     func instruction() -> CBInstruction {
         if let actionClosure = actionBlock() {
-            return .Action(action: SKAction.runBlock(actionClosure))
+            return .action(action: SKAction.run(actionClosure))
         }
-        return .InvalidInstruction()
+        return .invalidInstruction()
     }
 
-    func actionBlock() -> dispatch_block_t? {
+    func actionBlock() -> ()->()? {
         guard let object = self.script?.object,
               let spriteNode = object.spriteNode
         else { fatalError("This should never happen!") }
 
         return {
-            let cache:RuntimeImageCache = RuntimeImageCache.sharedImageCache()
-            var image = cache.cachedImageForPath(self.pathForLook())
+            let cache:RuntimeImageCache = RuntimeImageCache.shared()
+            var image = cache.cachedImage(forPath: self.pathForLook())
             
             if(image == nil){
                 print("LoadImageFromDisk")
-                cache.loadImageFromDiskWithPath(self.pathForLook())
+                cache.loadImageFromDisk(withPath: self.pathForLook())
                 guard let imageFromDisk = UIImage(contentsOfFile: self.pathForLook()) else { return }
                 image = imageFromDisk
             }

@@ -24,12 +24,12 @@ extension ChangeTransparencyByNBrick: CBInstructionProtocol {
 
     func instruction() -> CBInstruction {
         if let actionClosure = actionBlock() {
-            return .Action(action: SKAction.runBlock(actionClosure))
+            return .action(action: SKAction.run(actionClosure))
         }
-        return .InvalidInstruction()
+        return .invalidInstruction()
     }
 
-    func actionBlock() -> dispatch_block_t? {
+    func actionBlock() -> ()->()? {
         guard let object = self.script?.object,
               let spriteNode = object.spriteNode,
               let transparency = self.changeTransparency
@@ -37,7 +37,7 @@ extension ChangeTransparencyByNBrick: CBInstructionProtocol {
 
 
         return {
-            let trans = transparency.interpretDoubleForSprite(object)
+            let trans = transparency.interpretDouble(forSprite: object)
             let alpha = CGFloat(spriteNode.alpha - CGFloat(trans / 100.0))
             if (alpha < 0) {
                 spriteNode.alpha = 0;

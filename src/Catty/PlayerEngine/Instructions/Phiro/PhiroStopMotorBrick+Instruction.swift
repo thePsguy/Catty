@@ -27,7 +27,7 @@ extension PhiroMotorStopBrick :CBInstructionProtocol {
     
     func instruction() -> CBInstruction {
         
-        return CBInstruction.ExecClosure { (context, _) in
+        return CBInstruction.execClosure { (context, _) in
             
             guard let phiro:Phiro = BluetoothService.swiftSharedInstance.phiro else {
                 //ERROR
@@ -45,7 +45,7 @@ extension PhiroMotorStopBrick :CBInstructionProtocol {
                 phiro.stopLeftMotor();
                 break;
             }
-            context.state = .Runnable
+            context.state = .runnable
         }
         
     }

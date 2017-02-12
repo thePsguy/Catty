@@ -23,18 +23,18 @@
 extension ChangeYByNBrick: CBInstructionProtocol {
 
     func instruction() -> CBInstruction {
-        return .Action(action: SKAction.runBlock(actionBlock()))
+        return .action(action: SKAction.run(actionBlock()))
     }
 
-    func actionBlock() -> dispatch_block_t {
+    func actionBlock() -> ()->() {
         guard let object = self.script?.object,
             let spriteNode = object.spriteNode,
             let yMovement = self.yMovement
         else { fatalError("This should never happen!") }
 
         return {
-            let yMov = yMovement.interpretDoubleForSprite(object)
-            spriteNode.scenePosition = CGPointMake(spriteNode.scenePosition.x, spriteNode.scenePosition.y + CGFloat(yMov));
+            let yMov = yMovement.interpretDouble(forSprite: object)
+            spriteNode.scenePosition = CGPoint(x: spriteNode.scenePosition.x, y: spriteNode.scenePosition.y + CGFloat(yMov));
         }
     }
 }

@@ -31,9 +31,9 @@ extension SetVariableBrick: CBInstructionProtocol {
         let userVariable = self.userVariable
         let variableFormula = self.variableFormula
 
-        return CBInstruction.ExecClosure { (context, _) in
+        return CBInstruction.execClosure { (context, _) in
 //            self.logger.debug("Performing: SetVariableBrick")
-            let result = variableFormula.interpretVariableDataForSprite(spriteObject)
+            let result = variableFormula.interpretVariableData(forSprite: spriteObject)
             variables.setUserVariable(userVariable, toValue: result)
             
             //update visible userVariable
@@ -48,7 +48,7 @@ extension SetVariableBrick: CBInstructionProtocol {
                 value = ""
             }
             userVariable.textLabel.text = value
-            context.state = .Runnable
+            context.state = .runnable
         }
 
     }

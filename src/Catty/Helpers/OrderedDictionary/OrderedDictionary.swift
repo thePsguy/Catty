@@ -23,7 +23,7 @@
 import Foundation
 
 
-public struct OrderedDictionary<Key: Hashable, Value>: MutableCollectionType, ArrayLiteralConvertible, CustomStringConvertible {
+public struct OrderedDictionary<Key: Hashable, Value>: MutableCollection, ExpressibleByArrayLiteral, CustomStringConvertible {
     
     // ======================================================= //
     // MARK: - Type Aliases
@@ -78,11 +78,11 @@ public struct OrderedDictionary<Key: Hashable, Value>: MutableCollectionType, Ar
         }
     }
     
-    public func containsKey(key: Key) -> Bool {
+    public func containsKey(_ key: Key) -> Bool {
         return _orderedKeys.contains(key)
     }
     
-    public mutating func updateValue(value: Value, forKey key: Key) -> Value? {
+    public mutating func updateValue(_ value: Value, forKey key: Key) -> Value? {
         if _orderedKeys.contains(key) {
             guard let currentValue = _keysToValues[key] else {
                 fatalError("Inconsistency error occured in OrderedDictionary")
@@ -99,13 +99,13 @@ public struct OrderedDictionary<Key: Hashable, Value>: MutableCollectionType, Ar
         }
     }
     
-    public mutating func removeValueForKey(key: Key) -> Value? {
-        if let index = _orderedKeys.indexOf(key) {
+    public mutating func removeValueForKey(_ key: Key) -> Value? {
+        if let index = _orderedKeys.index(of: key) {
             guard let currentValue = _keysToValues[key] else {
                 fatalError("Inconsistency error occured in OrderedDictionary")
             }
             
-            _orderedKeys.removeAtIndex(index)
+            _orderedKeys.remove(at: index)
             _keysToValues[key] = nil
             
             return currentValue
@@ -114,9 +114,9 @@ public struct OrderedDictionary<Key: Hashable, Value>: MutableCollectionType, Ar
         }
     }
     
-    public mutating func removeAll(keepCapacity keepCapacity: Bool = true) {
-        _orderedKeys.removeAll(keepCapacity: keepCapacity)
-        _keysToValues.removeAll(keepCapacity: keepCapacity)
+    public mutating func removeAll(keepCapacity: Bool = true) {
+        _orderedKeys.removeAll(keepingCapacity: keepCapacity)
+        _keysToValues.removeAll(keepingCapacity: keepCapacity)
     }
     
     // ======================================================= //
@@ -136,11 +136,11 @@ public struct OrderedDictionary<Key: Hashable, Value>: MutableCollectionType, Ar
         }
     }
     
-    public func indexForKey(key: Key) -> Index? {
-        return _orderedKeys.indexOf(key)
+    public func indexForKey(_ key: Key) -> Index? {
+        return _orderedKeys.index(of: key)
     }
     
-    public func elementAtIndex(index: Index) -> Element? {
+    public func elementAtIndex(_ index: Index) -> Element? {
         guard _orderedKeys.indices.contains(index) else { return nil }
         
         let key = _orderedKeys[index]
@@ -152,11 +152,11 @@ public struct OrderedDictionary<Key: Hashable, Value>: MutableCollectionType, Ar
         return (key, value)
     }
     
-    public mutating func insertElementWithKey(key: Key, value: Value, atIndex index: Index) -> Value? {
+    public mutating func insertElementWithKey(_ key: Key, value: Value, atIndex index: Index) -> Value? {
         return insertElement((key, value), atIndex: index)
     }
     
-    public mutating func insertElement(newElement: Element, atIndex index: Index) -> Value? {
+    public mutating func insertElement(_ newElement: Element, atIndex index: Index) -> Value? {
         guard index >= 0 else {
             fatalError("Negative OrderedDictionary index is out of range")
         }
@@ -170,24 +170,24 @@ public struct OrderedDictionary<Key: Hashable, Value>: MutableCollectionType, Ar
         let adjustedIndex: Int
         let currentValue: Value?
         
-        if let currentIndex = _orderedKeys.indexOf(key) {
+        if let currentIndex = _orderedKeys.index(of: key) {
             currentValue = _keysToValues[key]
             adjustedIndex = (currentIndex < index - 1) ? index - 1 : index
             
-            _orderedKeys.removeAtIndex(currentIndex)
+            _orderedKeys.remove(at: currentIndex)
             _keysToValues[key] = nil
         } else {
             currentValue = nil
             adjustedIndex = index
         }
         
-        _orderedKeys.insert(key, atIndex: adjustedIndex)
+        _orderedKeys.insert(key, at: adjustedIndex)
         _keysToValues[key] = value
         
         return currentValue
     }
     
-    public mutating func updateElement(element: Element, atIndex index: Index) -> Element? {
+    public mutating func updateElement(_ element: Element, atIndex index: Index) -> Element? {
         guard let currentElement = elementAtIndex(index) else {
             fatalError("OrderedDictionary index out of range")
         }
@@ -200,10 +200,10 @@ public struct OrderedDictionary<Key: Hashable, Value>: MutableCollectionType, Ar
         return currentElement
     }
     
-    public mutating func removeAtIndex(index: Index) -> Element? {
+    public mutating func removeAtIndex(_ index: Index) -> Element? {
         if let element = elementAtIndex(index) {
-            _orderedKeys.removeAtIndex(index)
-            _keysToValues.removeValueForKey(element.0)
+            _orderedKeys.remove(at: index)
+            _keysToValues.removeValue(forKey: element.0)
             
             return element
         } else {
@@ -223,11 +223,11 @@ public struct OrderedDictionary<Key: Hashable, Value>: MutableCollectionType, Ar
         return _orderedKeys.endIndex
     }
     
-    public func generate() -> AnyGenerator<Element> {
+    public func makeIterator() -> AnyIterator<Element> {
         var nextIndex = 0
         let lastIndex = self.count
         
-        return AnyGenerator {
+        return AnyIterator {
             guard nextIndex < lastIndex else { return nil }
             
             let nextKey = self._orderedKeys[nextIndex]
@@ -249,7 +249,7 @@ public struct OrderedDictionary<Key: Hashable, Value>: MutableCollectionType, Ar
     // ======================================================= //
     
     public var description: String {
-        let content = map({ "\($0.0): \($0.1)" }).joinWithSeparator(", ")
+        let content = map({ "\($0.0): \($0.1)" }).joined(separator: ", ")
         return "[\(content)]"
     }
     
@@ -258,10 +258,10 @@ public struct OrderedDictionary<Key: Hashable, Value>: MutableCollectionType, Ar
     // ======================================================= //
     
     /// The backing store for the ordered keys.
-    private var _orderedKeys = [Key]()
+    fileprivate var _orderedKeys = [Key]()
     
     /// The backing store for the mapping of keys to values.
-    private var _keysToValues = [Key: Value]()
+    fileprivate var _keysToValues = [Key: Value]()
     
 }
 

@@ -31,19 +31,19 @@ extension ChangeVariableBrick: CBInstructionProtocol {
         let userVariable = self.userVariable
         let variableFormula = self.variableFormula
 
-        return CBInstruction.ExecClosure { (context, _) in
+        return CBInstruction.execClosure { (context, _) in
 //            self.logger.debug("Performing: ChangeVariableBrick")
-            let result = variableFormula.interpretVariableDataForSprite(spriteObject)
+            let result = variableFormula.interpretVariableData(forSprite: spriteObject)
             if userVariable.value == nil {
                 if result is NSNumber {
-                    userVariable.value = NSNumber(int: 0)
+                    userVariable.value = NSNumber(value: 0 as Int32)
                 } else {
                     userVariable.value = ""
                 }
             }
             if userVariable.value is NSNumber && result is NSNumber {
                 let number:NSNumber = (result as? NSNumber)!
-                variables.changeVariable(userVariable, byValue: number.doubleValue)
+                variables.change(userVariable, byValue: number.doubleValue)
                 //update active UserVariable
                 userVariable.textLabel.text = String(Int(userVariable.value.doubleValue))
             } else if userVariable.value is NSString {
@@ -52,7 +52,7 @@ extension ChangeVariableBrick: CBInstructionProtocol {
                 // do nothing
             }
             
-            context.state = .Runnable
+            context.state = .runnable
         }
 
     }

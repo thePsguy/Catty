@@ -24,7 +24,7 @@ import XCTest
 
 @testable import Pocket_Code
 
-public class MockTouch : UITouch {
+open class MockTouch : UITouch {
     var point : CGPoint!
     var lastNodeName : String!
     
@@ -32,31 +32,31 @@ public class MockTouch : UITouch {
         self.point = point
     }
     
-    override public func locationInView(view: UIView?) -> CGPoint {
+    override open func location(in view: UIView?) -> CGPoint {
         return self.point
     }
     
-    override public func locationInNode(node: SKNode) -> CGPoint {
+    override open func locationInNode(_ node: SKNode) -> CGPoint {
         self.lastNodeName = node.name
         return self.point
     }
 }
 
-public class MockImage : UIImage {
+open class MockImage : UIImage {
     public convenience init?(size: CGSize) {
         let rect = CGRect(origin: .zero, size: size)
-        let color = UIColor.blackColor()
+        let color = UIColor.black
         UIGraphicsBeginImageContextWithOptions(rect.size, false, 0.0)
         color.setFill()
         UIRectFill(rect)
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
-        guard let cgImage = image?.CGImage else { return nil }
-        self.init(CGImage: cgImage)
+        guard let cgImage = image?.cgImage else { return nil }
+        self.init(cgImage: cgImage)
     }
     
-    override public func isTransparentPixelAtPoint(point : CGPoint) -> Bool {
+    override open func isTransparentPixelAtPoint(_ point : CGPoint) -> Bool {
         return false
     }
 }
@@ -83,17 +83,17 @@ final class CBSceneTouchTests: XCTestCase {
         spriteObjectA.name = "SpriteObjectA"
         spriteObjectA.addLook(look, andSaveToDisk: false)
         spriteNodeA = CBSpriteNode(spriteObject: spriteObjectA)
-        spriteNodeA.currentUIImageLook = MockImage(size: CGSizeMake(100, 100))
+        spriteNodeA.currentUIImageLook = MockImage(size: CGSize(width: 100, height: 100))
         
         let spriteObjectB = SpriteObject()
         spriteObjectB.name = "SpriteObjectB"
         spriteObjectB.addLook(look, andSaveToDisk: false)
         spriteNodeB = CBSpriteNode(spriteObject: spriteObjectB)
-        spriteNodeB.currentUIImageLook = MockImage(size: CGSizeMake(100, 100))
+        spriteNodeB.currentUIImageLook = MockImage(size: CGSize(width: 100, height: 100))
     }
     
     func testTouchedWithTouch() {
-        spriteNodeA.size = CGSizeMake(10, 10)
+        spriteNodeA.size = CGSize(width: 10, height: 10)
         spriteNodeA.position = CGPoint(x: 10, y: 10)
         scene.addChild(spriteNodeA)
         
@@ -109,7 +109,7 @@ final class CBSceneTouchTests: XCTestCase {
     }
     
     func testZPosition() {
-        spriteNodeA.size = CGSizeMake(10, 10)
+        spriteNodeA.size = CGSize(width: 10, height: 10)
         spriteNodeA.position = CGPoint(x: 10, y: 10)
         spriteNodeA.zPosition = 1
         scene.addChild(spriteNodeA)
@@ -138,7 +138,7 @@ final class CBSceneTouchTests: XCTestCase {
     
     func testSKSpriteNode() {
         let nonSpriteObject = SKSpriteNode()
-        nonSpriteObject.size = CGSizeMake(10, 10)
+        nonSpriteObject.size = CGSize(width: 10, height: 10)
         nonSpriteObject.position = CGPoint(x: 10, y: 10)
         scene.addChild(nonSpriteObject)
         

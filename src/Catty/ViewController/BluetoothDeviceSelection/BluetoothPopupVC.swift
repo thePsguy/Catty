@@ -25,7 +25,7 @@ import MXSegmentedPager
 import BluetoothHelper
 
 @objc protocol BluetoothSelection {
-    func startSceneWithVC(scenePresenter:ScenePresenterViewController)
+    func startSceneWithVC(_ scenePresenter:ScenePresenterViewController)
     func showLoadingView()
 }
 
@@ -39,21 +39,21 @@ class BluetoothPopupVC: MXSegmentedPagerController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.segmentedPager.backgroundColor = UIColor.navBarColor()
-        self.navigationController?.navigationBar.tintColor = UIColor.navTintColor()
-        UINavigationBar.appearance().titleTextAttributes = [NSForegroundColorAttributeName : UIColor.navTextColor()]
+        self.segmentedPager.backgroundColor = UIColor.navBar()
+        self.navigationController?.navigationBar.tintColor = UIColor.navTint()
+        UINavigationBar.appearance().titleTextAttributes = [NSForegroundColorAttributeName : UIColor.navText()]
         // Segmented Control customization
-        self.segmentedPager.segmentedControl.selectionIndicatorLocation = HMSegmentedControlSelectionIndicatorLocation.Down;
-        self.segmentedPager.segmentedControl.backgroundColor = UIColor.globalTintColor()
-        self.segmentedPager.segmentedControl.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.backgroundColor(), NSFontAttributeName: UIFont.systemFontOfSize(12)];
-        self.segmentedPager.segmentedControl.selectedTitleTextAttributes = [NSForegroundColorAttributeName : UIColor.navTintColor()]
-        self.segmentedPager.segmentedControl.selectionStyle = HMSegmentedControlSelectionStyle.Box
-        self.segmentedPager.segmentedControl.selectionIndicatorColor = UIColor.globalTintColor()
-        self.segmentedPager.segmentedControl.segmentWidthStyle = HMSegmentedControlSegmentWidthStyle.Fixed
+        self.segmentedPager.segmentedControl.selectionIndicatorLocation = HMSegmentedControlSelectionIndicatorLocation.down;
+        self.segmentedPager.segmentedControl.backgroundColor = UIColor.globalTint()
+        self.segmentedPager.segmentedControl.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.background(), NSFontAttributeName: UIFont.systemFont(ofSize: 12)];
+        self.segmentedPager.segmentedControl.selectedTitleTextAttributes = [NSForegroundColorAttributeName : UIColor.navTint()]
+        self.segmentedPager.segmentedControl.selectionStyle = HMSegmentedControlSelectionStyle.box
+        self.segmentedPager.segmentedControl.selectionIndicatorColor = UIColor.globalTint()
+        self.segmentedPager.segmentedControl.segmentWidthStyle = HMSegmentedControlSegmentWidthStyle.fixed
 
         setHeader()
         
-        rightButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(BluetoothPopupVC.dismissView))
+        rightButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: self, action: #selector(BluetoothPopupVC.dismissView))
         self.navigationItem.rightBarButtonItem = rightButton
 
     }
@@ -63,18 +63,18 @@ class BluetoothPopupVC: MXSegmentedPagerController {
         // Dispose of any resources that can be recreated.
     }
     
-    override func segmentedPager(segmentedPager: MXSegmentedPager, titleForSectionAtIndex index: Int) -> String {
+    override func segmentedPager(_ segmentedPager: MXSegmentedPager, titleForSectionAt index: Int) -> String {
         return [klocalizedBluetoothKnown,klocalizedBluetoothSearch][index];//
     }
     
-    override func segmentedPager(segmentedPager: MXSegmentedPager, viewControllerForPageAtIndex index: Int) -> UIViewController {
-        let vc:BluetoothDevicesTableViewController = super.segmentedPager(segmentedPager, viewControllerForPageAtIndex: index) as! BluetoothDevicesTableViewController
+    override func segmentedPager(_ segmentedPager: MXSegmentedPager, viewControllerForPageAt index: Int) -> UIViewController {
+        let vc:BluetoothDevicesTableViewController = super.segmentedPager(segmentedPager, viewControllerForPageAt: index) as! BluetoothDevicesTableViewController
         vc.delegate = self
         return vc
     }
     
     func dismissView(){
-        self .dismissViewControllerAnimated(true, completion: {
+        self .dismiss(animated: true, completion: {
             let central = CentralManager.sharedInstance
             if central.isScanning {
                 central.stopScanning()
@@ -99,11 +99,11 @@ class BluetoothPopupVC: MXSegmentedPagerController {
     }
     
     func startScene(){
-        dispatch_async(dispatch_get_main_queue()){
+        DispatchQueue.main.async{
             self.delegate!.showLoadingView()
             self.delegate!.startSceneWithVC(self.vc!)
         }
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
 }
 

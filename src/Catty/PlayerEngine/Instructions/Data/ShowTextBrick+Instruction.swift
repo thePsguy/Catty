@@ -32,10 +32,10 @@ extension ShowTextBrick: CBInstructionProtocol {
         let xFormula = self.xFormula
         let yFormula = self.yFormula
 
-        return CBInstruction.ExecClosure { (context, _) in
+        return CBInstruction.execClosure { (context, _) in
 //            self.logger.debug("Performing: ShowTextBrick")
-            let xResult = xFormula.interpretDoubleForSprite(spriteObject)
-            let yResult = yFormula.interpretDoubleForSprite(spriteObject)
+            let xResult = xFormula.interpretDouble(forSprite: spriteObject)
+            let yResult = yFormula.interpretDouble(forSprite: spriteObject)
             var value = ""
             if userVariable.value is NSNumber{
                 let number:NSNumber = (userVariable.value as? NSNumber)!
@@ -52,8 +52,8 @@ extension ShowTextBrick: CBInstructionProtocol {
                 fatalError("This should never happen!")
             }
             userVariable.textLabel.position = CGPoint(x: scene.size.width / 2 + CGFloat(xResult), y: scene.size.height / 2 + CGFloat(yResult))
-            userVariable.textLabel.hidden = false
-            context.state = .Runnable
+            userVariable.textLabel.isHidden = false
+            context.state = .runnable
         }
 
     }

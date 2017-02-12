@@ -30,16 +30,16 @@ extension CBScene: RPScreenRecorderDelegate {
         if isScreenRecording { return }
 
         // Register as the recorder's delegate to handle errors.
-        RPScreenRecorder.sharedRecorder().startRecordingWithMicrophoneEnabled(true) { error in
+        RPScreenRecorder.shared().startRecording(withMicrophoneEnabled: true) { error in
             if let error = error {
                 self._showScreenRecordingAlert(error.localizedDescription)
             }
         }
     }
 
-    func _stopScreenRecordingWithHandler(handler:(() -> Void)) {
+    func _stopScreenRecordingWithHandler(_ handler:@escaping (() -> Void)) {
         if !isScreenRecording { return }
-        RPScreenRecorder.sharedRecorder().stopRecordingWithHandler {
+        RPScreenRecorder.shared().stopRecording {
             (previewVC: RPPreviewViewController?, error: NSError?) in
 
             if let error = error {
@@ -62,28 +62,28 @@ extension CBScene: RPScreenRecorderDelegate {
         }
     }
 
-    private func _showScreenRecordingAlert(message: String) {
+    fileprivate func _showScreenRecordingAlert(_ message: String) {
         // Pause the scene and un-pause after the alert returns.
-        paused = true
+        isPaused = true
 
         // Show an alert notifying the user that there was an issue with starting or stopping the recorder.
-        let alertController = UIAlertController(title: nil, message: message, preferredStyle: .Alert)
-        let alertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default) { _ in
-            self.paused = false
+        let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        let alertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) { _ in
+            self.isPaused = false
         }
         alertController.addAction(alertAction)
-        view?.window?.rootViewController?.presentViewController(alertController, animated: false, completion: nil)
+        view?.window?.rootViewController?.present(alertController, animated: false, completion: nil)
     }
 
     func discardRecording() {
         // When we no longer need the `previewViewController`, tell ReplayKit to discard the recording and nil out our reference
-        RPScreenRecorder.sharedRecorder().discardRecordingWithHandler {
+        RPScreenRecorder.shared().discardRecording {
             self.previewViewController = nil
         }
     }
 
     // MARK: RPScreenRecorderDelegate
-    func screenRecorder(screenRecorder: RPScreenRecorder, didStopRecordingWithError error: NSError,
+    func screenRecorder(_ screenRecorder: RPScreenRecorder, didStopRecordingWithError error: Error,
         previewViewController: RPPreviewViewController?
     ) {
         screenRecordingDelegate?.hideMenuRecordButton()
@@ -103,8 +103,8 @@ extension CBScene: RPScreenRecorderDelegate {
         }
     }
 
-    func screenRecorderDidChangeAvailability(screenRecorder: RPScreenRecorder) {
-        if screenRecorder.available {
+    func screenRecorderDidChangeAvailability(_ screenRecorder: RPScreenRecorder) {
+        if screenRecorder.isAvailable {
             screenRecordingDelegate?.showMenuRecordButton()
             return
         }

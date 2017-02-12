@@ -44,24 +44,24 @@ final class CBSpriteNode: SKSpriteNode {
     var scaleY: CGFloat { return (100 * yScale) }
     var rotation: Double {
         set {
-            self.zRotation = CGFloat(Util.degreeToRadians(CBSceneHelper.convertDegreesToScene(newValue)))
+            self.zRotation = CGFloat(Util.degree(toRadians: CBSceneHelper.convertDegreesToScene(newValue)))
         }
         get {
-            return CBSceneHelper.convertSceneToDegrees(Util.radiansToDegree(Double(self.zRotation)))
+            return CBSceneHelper.convertSceneToDegrees(Util.radians(toDegree: Double(self.zRotation)))
         }
     }
-    private var _lastTimeTouchedSpriteNode = [String:NSDate]()
+    fileprivate var _lastTimeTouchedSpriteNode = [String:Date]()
 
     // MARK: Custom getters and setters
-    func setPositionForCropping(position: CGPoint) {
+    func setPositionForCropping(_ position: CGPoint) {
         self.position = position
     }
 
     // MARK: - Initializers
     required init(spriteObject: SpriteObject) {
-        let color = UIColor.clearColor()
+        let color = UIColor.clear
         if let firstLook = spriteObject.lookList.firstObject as? Look,
-           let filePathForLook = spriteObject.pathForLook(firstLook),
+           let filePathForLook = spriteObject.path(for: firstLook),
            let image = UIImage(contentsOfFile:filePathForLook)
         {
             let texture = SKTexture(image: image)
@@ -70,12 +70,12 @@ final class CBSpriteNode: SKSpriteNode {
             self.currentLook = firstLook
             self.currentLook = firstLook
         } else {
-            super.init(color: color, size: CGSizeZero)
+            super.init(color: color, size: CGSize.zero)
         }
         self.spriteObject = spriteObject
         spriteObject.spriteNode = self
         self.name = spriteObject.name
-        self.userInteractionEnabled = false
+        self.isUserInteractionEnabled = false
         setLook()
     }
 
@@ -88,7 +88,7 @@ final class CBSpriteNode: SKSpriteNode {
     }
 
     // MARK: - Operations
-    func returnFIlterInstance(filterName: String, image: CIImage) -> CIFilter?{
+    func returnFIlterInstance(_ filterName: String, image: CIImage) -> CIFilter?{
         var filter: CIFilter? = nil;
         if (filterName == "brightness"){
             filter = CIFilter(name: "CIColorControls", withInputParameters: [kCIInputImageKey:image, "inputBrightness":self.currentLookBrightness])
@@ -99,11 +99,11 @@ final class CBSpriteNode: SKSpriteNode {
         return filter
     }
     
-    func executeFilter(inputImage: UIImage?){
+    func executeFilter(_ inputImage: UIImage?){
         let lookImage = inputImage
         var filter: CIFilter? = nil;
-        let image = lookImage!.CGImage
-        var ciImage = CIImage(CGImage: image!)
+        let image = lookImage!.cgImage
+        var ciImage = CIImage(cgImage: image!)
         /////
         let context = CIContext(options: nil)
         
@@ -116,10 +116,10 @@ final class CBSpriteNode: SKSpriteNode {
         
         let outputImage = ciImage
         // 2
-        let cgimg = context.createCGImage(outputImage, fromRect: outputImage.extent)
+        let cgimg = context.createCGImage(outputImage, from: outputImage.extent)
         
         // 3
-        let newImage = UIImage(CGImage: cgimg!)
+        let newImage = UIImage(cgImage: cgimg!)
         self.currentUIImageLook = newImage
         self.texture = SKTexture(image: newImage)
         let xScale = self.xScale
@@ -143,7 +143,7 @@ final class CBSpriteNode: SKSpriteNode {
             return nil
         }
         if let spriteObject = self.spriteObject {
-            var index = spriteObject.lookList.indexOfObject(currentLook!)
+            var index = spriteObject.lookList.index(of: currentLook!)
             index += 1
             index %= spriteObject.lookList.count
             return spriteObject.lookList[index] as? Look
@@ -151,9 +151,9 @@ final class CBSpriteNode: SKSpriteNode {
         return nil
     }
 
-    func changeLook(look: Look?) {
+    func changeLook(_ look: Look?) {
         if look == nil { return }
-        let filePathForLook = spriteObject?.pathForLook(look)
+        let filePathForLook = spriteObject?.path(for: look)
         if filePathForLook == nil { return }
         let image = UIImage(contentsOfFile:filePathForLook!)
         if image == nil { return }
@@ -195,14 +195,14 @@ final class CBSpriteNode: SKSpriteNode {
     }
 
     func setLook() {
-        if spriteObject?.lookList.count > 0 {
+        if (spriteObject?.lookList.count)! > 0 {
             changeLook(spriteObject?.lookList[0] as? Look)
         }
     }
 
     // MARK: Events
-    func start(zPosition: CGFloat) {
-        self.scenePosition = CGPointMake(0, 0)
+    func start(_ zPosition: CGFloat) {
+        self.scenePosition = CGPoint(x: 0, y: 0)
         self.zRotation = 0
         self.currentLookBrightness = 0
         if self.spriteObject?.isBackground() == true {
@@ -213,31 +213,30 @@ final class CBSpriteNode: SKSpriteNode {
         
     }
     
-    func touchedWithTouch(touch: UITouch, atPosition position: CGPoint) -> Bool {
+    func touchedWithTouch(_ touch: UITouch, atPosition position: CGPoint) -> Bool {
         guard let playerScene = (scene as? CBScene),
               let scheduler = playerScene.scheduler,
-              let imageLook = currentUIImageLook
-        where scheduler.running
+              let imageLook = currentUIImageLook, scheduler.running
         else { return false }
 
         guard let spriteObject = spriteObject,
               let spriteName = spriteObject.name
         else { fatalError("Invalid SpriteObject!") }
-        let touchedPoint = touch.locationInNode(self)
+        let touchedPoint = touch.location(in: self)
         
-        if imageLook.isTransparentPixelAtScenePoint(touchedPoint) {
+        if imageLook.isTransparentPixel(atScenePoint: touchedPoint) {
             print("\(spriteName): \"I'm transparent at this point\"")
             return false
         }
 
         if let lastTime = _lastTimeTouchedSpriteNode[spriteName] {
-            let duration = NSDate().timeIntervalSinceDate(lastTime)
+            let duration = Date().timeIntervalSince(lastTime)
             // ignore multiple touches on same sprite node within a certain amount of time...
             if duration < PlayerConfig.MinIntervalBetweenTwoAcceptedTouches {
                 return true
             }
         }
-        _lastTimeTouchedSpriteNode[spriteName] = NSDate()
+        _lastTimeTouchedSpriteNode[spriteName] = Date()
 
         scheduler.startWhenContextsOfSpriteNodeWithName(spriteName)
 

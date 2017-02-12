@@ -26,7 +26,7 @@ extension PhiroRGBLightBrick :CBInstructionProtocol {
     
     func instruction() -> CBInstruction {
         
-        return CBInstruction.ExecClosure { (context, _) in
+        return CBInstruction.execClosure { (context, _) in
             let redValue = self.getFormulaValue(self.redFormula)
             let greenValue = self.getFormulaValue(self.greenFormula)
             let blueValue = self.getFormulaValue(self.blueFormula)
@@ -49,14 +49,14 @@ extension PhiroRGBLightBrick :CBInstructionProtocol {
                 phiro.setRightRGBLightColor(redValue, green: greenValue, blue: blueValue);
                 break;
             }
-            context.state = .Runnable
+            context.state = .runnable
         }
         
     }
     
     
-    func getFormulaValue(formula:Formula) -> Int {
-        var rgbValue = Int(formula.interpretIntegerForSprite(self.script?.object))
+    func getFormulaValue(_ formula:Formula) -> Int {
+        var rgbValue = Int(formula.interpretInteger(forSprite: self.script?.object))
         if (rgbValue < 0) {
             rgbValue = 0;
         } else if (rgbValue > 255) {

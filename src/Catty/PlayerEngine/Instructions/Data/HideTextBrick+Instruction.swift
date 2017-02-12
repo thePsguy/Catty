@@ -30,10 +30,10 @@ extension HideTextBrick: CBInstructionProtocol {
 
         let userVariable = self.userVariable
 
-        return CBInstruction.ExecClosure { (context, _) in
+        return CBInstruction.execClosure { (context, _) in
 //            self.logger.debug("Performing: HideTextBrick")
-            userVariable.textLabel.hidden = true
-            context.state = .Runnable
+            userVariable.textLabel.isHidden = true
+            context.state = .runnable
         }
 
     }

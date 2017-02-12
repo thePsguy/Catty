@@ -24,12 +24,12 @@ extension ChangeColorByNBrick: CBInstructionProtocol {
 
     func instruction() -> CBInstruction {
         if let actionClosure = actionBlock() {
-            return .Action(action: SKAction.runBlock(actionClosure))
+            return .action(action: SKAction.run(actionClosure))
         }
-        return .InvalidInstruction()
+        return .invalidInstruction()
     }
     
-    func actionBlock() -> dispatch_block_t? {
+    func actionBlock() -> ()->()? {
         guard let object = self.script?.object,
             let spriteNode = object.spriteNode,
             let colorFormula = self.changeColor
@@ -38,11 +38,11 @@ extension ChangeColorByNBrick: CBInstructionProtocol {
         return {
             guard let look = object.spriteNode!.currentLook else { return }
             
-            let colorValue = colorFormula.interpretDoubleForSprite(object)
+            let colorValue = colorFormula.interpretDouble(forSprite: object)
             
-            let lookImage = UIImage(contentsOfFile:self.pathForLook(look))
+            let lookImage = UIImage(contentsOfFile:self.path(for: look))
             let colorDefaultValue:CGFloat = 0.0
-            let colorValueRadian = (spriteNode.currentLookColor + CGFloat(colorValue)*CGFloat(M_PI)/100)%(2*CGFloat(M_PI))
+            let colorValueRadian = (spriteNode.currentLookColor + CGFloat(colorValue)*CGFloat(M_PI)/100).truncatingRemainder(dividingBy: (2*CGFloat(M_PI)))
             spriteNode.currentLookColor = colorValueRadian
             
             if (colorValueRadian != colorDefaultValue){

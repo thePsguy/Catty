@@ -26,7 +26,7 @@ extension SpeakBrick: CBInstructionProtocol {
         
         guard let object = self.script?.object else { fatalError("This should never happen!") }
         
-        return CBInstruction.ExecClosure { (context, _) in
+        return CBInstruction.execClosure { (context, _) in
             var speakText = self.formula.interpretString(object)
             if(Double(speakText) !=  nil)
             {
@@ -38,8 +38,8 @@ extension SpeakBrick: CBInstructionProtocol {
             utterance.rate = (floor(NSFoundationVersionNumber) < 1200 ? 0.15 : 0.5)
             
             let synthesizer = AVSpeechSynthesizer()
-            synthesizer.speakUtterance(utterance)
-            context.state = .Runnable
+            synthesizer.speak(utterance)
+            context.state = .runnable
         }
         
     }

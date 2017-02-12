@@ -41,7 +41,7 @@ final class UIImageExtensionTests: XCTestCase {
     }
     
     func testTransparencyRGBA() {
-        let bundlePath = NSBundle(forClass: self.dynamicType).pathForResource("transparency-rgba", ofType: "png")
+        let bundlePath = Bundle(for: type(of: self)).path(forResource: "transparency-rgba", ofType: "png")
         let image = UIImage(contentsOfFile: bundlePath!)
         
         let nonTransparentPoints = [
@@ -74,7 +74,7 @@ final class UIImageExtensionTests: XCTestCase {
     }
     
     func testTransparencyGrayAlpha() {
-        let bundlePath = NSBundle(forClass: self.dynamicType).pathForResource("transparency-gray-alpha", ofType: "png")
+        let bundlePath = Bundle(for: type(of: self)).path(forResource: "transparency-gray-alpha", ofType: "png")
         let image = UIImage(contentsOfFile: bundlePath!)
         
         let nonTransparentPoints = [
@@ -107,7 +107,7 @@ final class UIImageExtensionTests: XCTestCase {
     }
     
     func testTransparencyRGB() {
-        let bundlePath = NSBundle(forClass: self.dynamicType).pathForResource("transparency-rgb", ofType: "png")
+        let bundlePath = Bundle(for: type(of: self)).path(forResource: "transparency-rgb", ofType: "png")
         let image = UIImage(contentsOfFile: bundlePath!)
         
         for pixelX in 0..<10 {
@@ -134,28 +134,28 @@ final class UIImageExtensionTests: XCTestCase {
         XCTAssertFalse(image.isTransparentPixelAtPoint(CGPoint(x: 0, y: 2)), "Wrong alpha value at point (0, 2)")
     }
     
-    func imageFromARGB(pixels:[PixelDataARGB], width:Int, height:Int)->UIImage {
+    func imageFromARGB(_ pixels:[PixelDataARGB], width:Int, height:Int)->UIImage {
         assert(pixels.count == Int(width * height))
         
         var data = pixels
-        let providerRef = CGDataProviderCreateWithCFData(
-            NSData(bytes: &data, length: data.count * 4)
+        let providerRef = CGDataProvider(
+            data: Data(bytes: UnsafePointer<UInt8>(&data), count: data.count * 4)
         )
         
-        let cgim = CGImageCreate(
-            width,
-            height,
-            8,
-            32,
-            width * 4,
-            CGColorSpaceCreateDeviceRGB(),
-            CGBitmapInfo(rawValue: CGImageAlphaInfo.PremultipliedFirst.rawValue),
-            providerRef!,
-            nil,
-            true,
-            CGColorRenderingIntent.RenderingIntentDefault
+        let cgim = CGImage(
+            width: width,
+            height: height,
+            bitsPerComponent: 8,
+            bitsPerPixel: 32,
+            bytesPerRow: width * 4,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedFirst.rawValue),
+            provider: providerRef!,
+            decode: nil,
+            shouldInterpolate: true,
+            intent: CGColorRenderingIntent.defaultIntent
         )
         
-        return UIImage(CGImage: cgim!)
+        return UIImage(cgImage: cgim!)
     }
 }

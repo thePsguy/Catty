@@ -25,7 +25,7 @@ extension FlashBrick: CBInstructionProtocol {
     func instruction() -> CBInstruction {
 
         let choice = self.flashChoice
-        return CBInstruction.ExecClosure { (context, _) in
+        return CBInstruction.execClosure { (context, _) in
             //            self.logger.debug("Performing: FlashLightOffBrick/LEDOffBrick")
             if (choice == 0)
             {
@@ -36,7 +36,7 @@ extension FlashBrick: CBInstructionProtocol {
                 FlashHelper.sharedFlashHandler().turnOn()
             }
             
-            context.state = .Runnable
+            context.state = .runnable
         }
     }
     

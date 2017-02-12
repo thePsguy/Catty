@@ -23,18 +23,18 @@
 extension SetXBrick: CBInstructionProtocol {
 
     func instruction() -> CBInstruction {
-        return .Action(action: SKAction.runBlock(actionBlock()))
+        return .action(action: SKAction.run(actionBlock()))
     }
 
-    func actionBlock() -> dispatch_block_t {
+    func actionBlock() -> ()->() {
         guard let object = self.script?.object,
               let spriteNode = object.spriteNode
         else { fatalError("This should never happen!") }
 
         return {
-            spriteNode.scenePosition = CGPointMake(
-                CGFloat(self.xPosition.interpretDoubleForSprite(object)),
-                spriteNode.scenePosition.y
+            spriteNode.scenePosition = CGPoint(
+                x: CGFloat(self.xPosition.interpretDouble(forSprite: object)),
+                y: spriteNode.scenePosition.y
             )
         }
     }

@@ -27,8 +27,8 @@ extension PhiroPlayToneBrick :CBInstructionProtocol {
     func instruction() -> CBInstruction {
         guard let object = self.script?.object
             else { fatalError("This should never happen!") }
-        return CBInstruction.ExecClosure { (context, _) in
-            let durationInterpretation = self.durationFormula.interpretDoubleForSprite(object)
+        return CBInstruction.execClosure { (context, _) in
+            let durationInterpretation = self.durationFormula.interpretDouble(forSprite: object)
             
             
             guard let phiro:Phiro = BluetoothService.swiftSharedInstance.phiro else {
@@ -60,7 +60,7 @@ extension PhiroPlayToneBrick :CBInstructionProtocol {
                     phiro.playTone(494, duration: durationInterpretation);
                 break;
             }
-            context.state = .Runnable
+            context.state = .runnable
         }
         
     }

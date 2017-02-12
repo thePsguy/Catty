@@ -23,16 +23,16 @@
 extension SetSizeToBrick: CBInstructionProtocol {
 
     func instruction() -> CBInstruction {
-        return .Action(action: SKAction.runBlock(actionBlock()))
+        return .action(action: SKAction.run(actionBlock()))
     }
 
-    func actionBlock() -> dispatch_block_t {
+    func actionBlock() -> ()->() {
         guard let object = self.script?.object,
               let spriteNode = object.spriteNode
         else { fatalError("This should never happen!") }
 
         return {
-            let sizeInPercent = self.size.interpretDoubleForSprite(object)
+            let sizeInPercent = self.size.interpretDouble(forSprite: object)
             spriteNode.xScale = CGFloat(sizeInPercent/100.0)
             spriteNode.yScale = CGFloat(sizeInPercent/100.0)
         }

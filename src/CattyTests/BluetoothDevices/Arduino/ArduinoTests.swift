@@ -571,7 +571,7 @@ class ArduinoTests: XCTestCase {
     func testFirmataDeviceSending () {
         //Given
         let name = "test"
-        let data = name.dataUsingEncoding(NSASCIIStringEncoding)
+        let data = name.data(using: String.Encoding.ascii)
         arduinoTest.txCharacteristic = CharacteristicMock(test: true)
         //When
         arduinoTest.sendData(data!)
@@ -587,7 +587,7 @@ class ArduinoTests: XCTestCase {
     func testFirmataDeviceSending2 () {
         //Given
         let name = "testtesttesttesttesttest"
-        let data = name.dataUsingEncoding(NSASCIIStringEncoding)
+        let data = name.data(using: String.Encoding.ascii)
         arduinoTest.txCharacteristic = CharacteristicMock(test: true)
         //When
         arduinoTest.sendData(data!)
@@ -597,7 +597,7 @@ class ArduinoTests: XCTestCase {
             return
         }
         let checkName = "test"
-        let checkData = checkName.dataUsingEncoding(NSASCIIStringEncoding)
+        let checkData = checkName.data(using: String.Encoding.ascii)
         XCTAssertEqual(peripheralMock.dataToSend,checkData,"Data is wrong")
     }
     
