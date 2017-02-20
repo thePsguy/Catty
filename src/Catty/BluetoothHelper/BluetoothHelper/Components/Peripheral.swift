@@ -162,7 +162,7 @@ open class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrapper {
             return
         }
         NSLog("uuid=\(ownCharacteristic.uuid.uuidString), name=\(ownCharacteristic.name)")
-        ownCharacteristic.didUpdateNotificationState(error)
+        ownCharacteristic.didUpdateNotificationState(error as NSError?)
     }
     
     open func peripheral(_ peripheral:CBPeripheral, didUpdateValueFor characteristic:CBCharacteristic, error:Error?) {
@@ -171,7 +171,7 @@ open class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrapper {
             return
         }
         NSLog("uuid=\(ownCharacteristic.uuid.uuidString), name=\(ownCharacteristic.name)")
-        ownCharacteristic.didUpdate(error)
+        ownCharacteristic.didUpdate(error as NSError?)
     }
     
     
@@ -182,7 +182,7 @@ open class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrapper {
             return
         }
         NSLog("uuid=\(ownCharacteristic.uuid.uuidString), name=\(ownCharacteristic.name)")
-        ownCharacteristic.didWrite(error)
+        ownCharacteristic.didWrite(error as NSError?)
     }
     
     

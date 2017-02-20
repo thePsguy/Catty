@@ -40,7 +40,7 @@ extension Optional {
         case .some(let value):
             return predicate(value) ? Optional(value) : nil
         case .none:
-            return Optional()
+            return Optional.none
         }
     }
     
@@ -79,7 +79,7 @@ public func flatten<T>(_ maybe:T??) -> T? {
     case .some(let value):
         return value
     case .none:
-        return Optional()
+        return Optional.none
     }
 }
 
@@ -256,7 +256,7 @@ public enum Try<T> {
         case .success(let value):
             return Optional<T>(value)
         case .failure(_):
-            return Optional<T>()
+          return Optional<T>.none
         }
     }
     
@@ -374,13 +374,12 @@ public func forcomp<T,U,V,W>(_ f:Try<T>, g:Try<U>, h:Try<V>, filter:(T,U,V) -> B
 // ExecutionContext
 public protocol ExecutionContext {
     
-    func execute(_ task:(Void)->Void)
+    func execute(_ task:@escaping (Void)->Void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // QueueContext
 public struct QueueContext : ExecutionContext {
-    
     public static let main =  QueueContext(queue:Queue.main)
     
     public static let global = QueueContext(queue:Queue.global)
@@ -401,8 +400,8 @@ public struct QueueContext : ExecutionContext {
 public struct Queue {
     
     public static let main              = Queue(DispatchQueue.main);
-    public static let global            = Queue(DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.default))
-    
+    public static let global            = Queue(DispatchQueue.global(qos: DispatchQoS.QoSClass.default))
+  
     internal static let simpleFutures       = Queue("us.gnos.simpleFutures")
     internal static let simpleFutureStreams = Queue("us.gnos.simpleFutureStreams")
     
@@ -573,7 +572,7 @@ open class Future<T> {
         return future
     }
     
-    open func flatmap<M>(_ mapping:(T) -> Future<M>) -> Future<M> {
+    open func flatmap<M>(_ mapping:@escaping (T) -> Future<M>) -> Future<M> {
         return self.flatmap(self.defaultExecutionContext, mapping:mapping)
     }
     
@@ -615,7 +614,7 @@ open class Future<T> {
         return future
     }
     
-    open func recoverWith(_ recovery:(NSError) -> Future<T>) -> Future<T> {
+    open func recoverWith(_ recovery:@escaping (NSError) -> Future<T>) -> Future<T> {
         return self.recoverWith(self.defaultExecutionContext, recovery:recovery)
     }
     
@@ -750,11 +749,11 @@ open class Future<T> {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // create futures
-public func future<T>(_ computeResult:(Void) -> Try<T>) -> Future<T> {
+public func future<T>(_ computeResult:@escaping (Void) -> Try<T>) -> Future<T> {
     return future(QueueContext.global, calculateResult:computeResult)
 }
 
-public func future<T>(_ executionContext:ExecutionContext, calculateResult:(Void) -> Try<T>) -> Future<T> {
+public func future<T>(_ executionContext:ExecutionContext, calculateResult:@escaping (Void) -> Try<T>) -> Future<T> {
     let promise = Promise<T>()
     executionContext.execute {
         promise.complete(calculateResult())
@@ -1048,7 +1047,7 @@ open class FutureStream<T> {
         return future
     }
     
-    open func recoverWith(_ recovery:(NSError) -> FutureStream<T>) -> FutureStream<T> {
+    open func recoverWith(_ recovery:@escaping (NSError) -> FutureStream<T>) -> FutureStream<T> {
         return self.recoverWith(self.defaultExecutionContext, recovery:recovery)
     }
     
@@ -1123,7 +1122,7 @@ open class FutureStream<T> {
         return future
     }
     
-    open func recoverWith(_ recovery:(NSError) -> Future<T>) -> FutureStream<T> {
+    open func recoverWith(_ recovery:@escaping (NSError) -> Future<T>) -> FutureStream<T> {
         return self.recoverWith(self.defaultExecutionContext, recovery:recovery)
     }
     

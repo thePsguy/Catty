@@ -13,7 +13,7 @@ def available_pods
     pod 'Shimmer'
     pod 'MYBlurIntroductionView'
     pod 'TTTAttributedLabel'
-    pod 'Siren'
+	pod 'Siren'
     pod 'LXReorderableCollectionViewFlowLayout', '~> 0.1.1'
     pod 'UIDevice-Hardware'
 end
