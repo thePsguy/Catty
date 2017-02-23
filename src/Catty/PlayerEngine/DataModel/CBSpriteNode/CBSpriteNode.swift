@@ -26,9 +26,8 @@ final class CBSpriteNode: SKSpriteNode {
     var spriteObject: SpriteObject?
     var currentLook: Look?
     var currentUIImageLook: UIImage?
-    var currentLookBrightness: CGFloat = 1.0
+    var currentLookBrightness: CGFloat = BrightnessConverter.init_value
     var currentLookColor: CGFloat = 0.0
-    
     var filterDict = ["brightness": false,
                                "color": false]
     
