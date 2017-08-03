@@ -46,16 +46,6 @@ final class SpeakAndWaitBrickTests: XCTestCase {
         script.object = spriteObject;
     }
     
-    func testSpeakAndWaitBrick() {
-        let duration = 2.0 // 2 seconds
-        let waitBrick = WaitBrick()
-        waitBrick.timeToWaitInSeconds = Formula(double: duration)
-        waitBrick.script = script;
-        
-        let executionTime = measureExecutionTime(waitBrick.instruction())
-        XCTAssertEqualWithAccuracy(executionTime, duration, accuracy: 0.1, "Wrong execution time")
-    }
-    
     func testSpeakAndWaitDuration() {
         let exp = self.expectationWithDescription("Speech Expectation")
         let speakAndWaitBrick = SpeakAndWaitBrick()
