@@ -41,14 +41,20 @@ extension SpeakAndWaitBrick: CBInstructionProtocol, AVSpeechSynthesizerDelegate 
             let utterance = AVSpeechUtterance(string: speakText)
             utterance.rate = (floor(NSFoundationVersionNumber) < 1200 ? 0.15 : 0.5)
             
+            #if TESTMODE
+                utterance.volume = 0
+            #endif
+                            
             let synthesizer = AVSpeechSynthesizer()
             synthesizer.delegate = self
             synthesizer.accessibilityElements = [condition]
             synthesizer.speakUtterance(utterance)
-
+            if (!synthesizer.speaking) {        //synthesizer.speaking not true right away.
+                while (!synthesizer.speaking) {}
+            }
             condition.lock()
 
-            while(condition.accessibilityHint == "0") {     //accessibilityHint used because synthesizer.speaking not yet true.
+            while(synthesizer.speaking) {
                 condition.wait()
             }
             condition.unlock()
@@ -58,7 +64,6 @@ extension SpeakAndWaitBrick: CBInstructionProtocol, AVSpeechSynthesizerDelegate 
 
     public func speechSynthesizer(synthesizer: AVSpeechSynthesizer, didFinishSpeechUtterance utterance: AVSpeechUtterance) {
         if let condition = synthesizer.accessibilityElements?.last as? NSCondition {
-            condition.accessibilityHint = "1"
             condition.signal()
         }
     }
